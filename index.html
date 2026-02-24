@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workshop RPA + MAKE - CDA FINAL</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Lexend:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --cda-navy: #004b87;
+            --cda-blue: #007dc4;
+            --cda-orange: #f39200;
+            --cda-light: #f8fafc;
+            --cda-text: #1e293b;
+            --cda-gray: #64748b;
+            --success: #10b981;
+        }
+
+        /* RESET & BASE */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            background-color: #0f172a;
+            font-family: 'Inter', sans-serif;
+            color: var(--cda-text);
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: radial-gradient(circle at 10% 20%, rgba(0, 75, 135, 0.3) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 80%, rgba(243, 146, 0, 0.2) 0%, transparent 40%),
+                        #0f172a;
+        }
+
+        .scaler {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .presentation-deck {
+            width: 1280px;
+            height: 720px;
+            position: relative;
+            transform-origin: center center;
+            flex-shrink: 0;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 24px;
+            display: none;
+            flex-direction: column;
+            padding: 50px 70px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+            justify-content: flex-start;
+            overflow: hidden;
+        }
+
+        .slide.active { display: flex; z-index: 10; animation: slideFade 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        @keyframes slideFade {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* HEADER */
+        .slide-title {
+            font-family: 'Lexend', sans-serif;
+            font-size: 42px;
+            font-weight: 800;
+            color: var(--cda-navy);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .slide-title::before {
+            content: ''; width: 10px; height: 45px; background: var(--cda-orange); border-radius: 5px;
+        }
+
+        .header-logo { position: absolute; top: 35px; right: 50px; height: 50px; }
+
+        .orange-bar {
+            position: absolute; top: 0; left: 0; width: 100%; height: 10px;
+            background: linear-gradient(90deg, var(--cda-navy), var(--cda-orange));
+        }
+
+        /* CARDS & GRIDS */
+        .content-filler { display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; }
+
+        .card-navy { background: var(--cda-navy); color: white; border-radius: 20px; padding: 30px; margin-bottom: 15px; }
+        .card-navy p { font-size: 20px; line-height: 1.5; color: white; }
+
+        .feature-card {
+            background: var(--cda-light); border: 1px solid #e2e8f0; border-radius: 20px;
+            padding: 25px; display: flex; flex-direction: column; justify-content: center;
+            text-align: center; transition: all 0.3s ease; height: 100%;
+        }
+        .feature-card i { font-size: 45px; color: var(--cda-navy); margin-bottom: 12px; }
+        .feature-card h3 { font-family: 'Lexend'; font-size: 20px; color: var(--cda-navy); margin-bottom: 8px; }
+
+        .pillar-item { 
+            background: var(--cda-light); padding: 15px; border-radius: 12px; border-left: 5px solid var(--cda-orange);
+            font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center;
+            text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+
+        /* SLIDE 7: LOGIC */
+        .logic-diagram {
+            display: flex; justify-content: space-around; align-items: center;
+            background: var(--cda-light); padding: 35px; border-radius: 20px; margin-bottom: 25px;
+        }
+        .logic-node { text-align: center; flex: 1; }
+        .logic-node i { font-size: 60px; color: var(--cda-orange); margin-bottom: 10px; }
+        .logic-node h3 { font-family: 'Lexend'; font-size: 22px; color: var(--cda-navy); font-weight: 700; }
+        .logic-sep { font-size: 30px; color: var(--cda-blue); opacity: 0.5; }
+
+        .example-grid-logic {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; flex-grow: 1;
+        }
+        .example-card-logic {
+            background: #ffffff; border: 1px solid #e2e8f0; border-left: 6px solid var(--cda-blue);
+            padding: 18px; border-radius: 12px; display: flex; flex-direction: column; justify-content: center;
+        }
+        .example-card-logic span { font-size: 11px; text-transform: uppercase; font-weight: 800; color: var(--cda-orange); margin-bottom: 5px; }
+        .example-card-logic p { font-size: 15px; color: var(--cda-navy); font-weight: 600; }
+
+        /* SLIDE 8: COMPONENTES */
+        .pillar-container { display: flex; gap: 20px; flex-grow: 1; }
+        .pillar { flex: 1; display: flex; flex-direction: column; gap: 15px; }
+        .pillar-head-new { 
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            padding: 20px; border-radius: 100px; color: white;
+            font-family: 'Lexend'; font-size: 20px; font-weight: 700;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-transform: uppercase;
+        }
+        .head-trigger { background: linear-gradient(135deg, var(--cda-orange), #ffb347); }
+        .head-action { background: linear-gradient(135deg, var(--cda-navy), var(--cda-blue)); }
+        .head-result { background: linear-gradient(135deg, var(--success), #34d399); }
+
+        /* SLIDE 9: WIL INTRO BOX */
+        .wil-intro-box {
+            background: #f8fafc; border: 2px solid var(--cda-blue); border-radius: 15px;
+            padding: 20px 30px; margin-bottom: 20px;
+        }
+        .wil-intro-box p { font-size: 16px; color: var(--cda-text); line-height: 1.5; font-style: italic; }
+        
+        .wil-flow-v6 {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 20px 0;
+        }
+        .flow-step-v6 {
+            background: var(--cda-navy); color: white; border-radius: 12px;
+            padding: 15px 10px; flex: 1; text-align: center;
+        }
+        .flow-step-v6 i { font-size: 24px; color: var(--cda-orange); margin-bottom: 8px; }
+        .flow-step-v6 h4 { font-size: 12px; font-family: 'Lexend'; }
+
+        /* SLIDE 10: OPORTUNIDADES */
+        .opp-grid {
+            display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 30px; flex-grow: 1; align-items: stretch;
+        }
+        .opp-left { display: flex; flex-direction: column; gap: 15px; justify-content: center; }
+        .opp-card-criteria {
+            background: var(--cda-navy); color: white; border-radius: 20px; padding: 40px;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+
+        /* SLIDE 11: CURSO MAKE */
+        .course-layout {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 30px; flex-grow: 1; align-items: center;
+        }
+        .course-main-card {
+            background: linear-gradient(145deg, var(--cda-navy), #003661);
+            border-radius: 24px; padding: 40px; color: white; height: 100%;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        .course-items-grid {
+            display: grid; grid-template-columns: 1fr; gap: 12px;
+        }
+        .course-resource {
+            background: var(--cda-light); border: 1px solid #e2e8f0; padding: 20px; border-radius: 15px;
+            display: flex; align-items: center; gap: 15px;
+        }
+        .course-resource i { font-size: 28px; color: var(--cda-orange); }
+        .course-resource h4 { font-family: 'Lexend'; color: var(--cda-navy); font-size: 16px; }
+
+        /* SLIDE 12: COMO SEGUIMOS */
+        .next-steps-grid {
+            display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 30px; flex-grow: 1;
+        }
+        .po-highlight {
+            background: #f0f7ff; border: 2px solid var(--cda-blue); border-radius: 20px; padding: 25px;
+        }
+        .po-head { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
+        .po-head i { font-size: 50px; color: var(--cda-blue); }
+        .po-head div h3 { color: var(--cda-navy); font-family: 'Lexend'; font-size: 26px; }
+        .po-head div span { color: var(--cda-orange); font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+
+        .rol-list { list-style: none; }
+        .rol-list li { position: relative; padding-left: 25px; margin-bottom: 12px; font-size: 15px; line-height: 1.4; color: var(--cda-text); }
+        .rol-list li::before { content: "•"; color: var(--cda-orange); position: absolute; left: 0; font-weight: bold; font-size: 20px; }
+
+        .support-box {
+            background: var(--cda-navy); color: white; border-radius: 20px; padding: 25px; margin-top: 20px;
+        }
+        .support-box h4 { color: var(--cda-orange); font-family: 'Lexend'; margin-bottom: 10px; font-size: 18px; }
+
+        .timeline-result {
+            background: var(--success); color: white; border-radius: 20px; padding: 30px; 
+            display: flex; flex-direction: column; justify-content: center; text-align: center;
+        }
+
+        /* NAVIGATION UI */
+        .nav-ui { position: fixed; bottom: 35px; right: 40px; display: flex; gap: 12px; z-index: 1000; }
+        .nav-btn {
+            width: 55px; height: 55px; border-radius: 50%; background: white; border: none;
+            color: var(--cda-navy); cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex; align-items: center; justify-content: center; transition: 0.3s;
+            outline: none;
+        }
+        .nav-btn:hover { background: var(--cda-orange); color: white; transform: scale(1.1); }
+        .slide-counter {
+            position: fixed; bottom: 50px; left: 70px; font-family: 'Lexend'; font-weight: 700;
+            color: rgba(255,255,255,0.7); z-index: 1000; letter-spacing: 2px;
+        }
+
+        .animate-bounce { animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    </style>
+</head>
+<body>
+
+    <div class="scaler">
+        <div class="presentation-deck" id="deck">
+            
+            <!-- SLIDE 1: PORTADA -->
+            <div class="slide active" id="slide-1" style="justify-content: center; align-items: center; text-align: center;">
+                <div class="orange-bar"></div>
+                <img src="https://lh3.googleusercontent.com/d/1UomK2PgHz09yWMXjdLrhDADxWFqbfZE4" style="height: 120px; margin-bottom: 30px;" alt="CDA Logo">
+                <h2 style="font-family: 'Lexend'; color: var(--cda-orange); letter-spacing: 4px;"> FEBRERO 2026</h2>
+                <h1 style="font-family: 'Lexend'; font-size: 75px; color: var(--cda-navy); font-weight: 800;">Presentación RPA</h1>
+                <p style="font-size: 20px; color: var(--cda-gray); margin-top: 20px;">Automatización de procesos internos CDA</p>
+            </div>
+
+            <!-- SLIDE 2: EL DÍA A DÍA -->
+            <div class="slide" id="slide-2">
+                <div class="orange-bar"></div>
+                <img src="https://lh3.googleusercontent.com/d/1UomK2PgHz09yWMXjdLrhDADxWFqbfZE4" class="header-logo" alt="Logo">
+                <h2 class="slide-title">El día a día</h2>
+                <div class="content-filler">
+                    <div class="card-navy">
+                        <p style="font-style: italic; font-size: 24px; text-align: center;">"Existen muchas tareas y procesos que hacemos diariamente que son repetitivos y estructurados. Esto nos consume tiempo; es pesado, no lo vamos a negar."</p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; flex-grow: 1;">
+                        <div class="feature-card" style="border-bottom: 8px solid var(--cda-orange);"><i class="fa-solid fa-brain"></i><h3>Carga Mental</h3><p>Tareas monótonas que agotan el enfoque estratégico.</p></div>
+                        <div class="feature-card" style="border-bottom: 8px solid var(--cda-blue);"><i class="fa-solid fa-clock"></i><h3>Fuga de Tiempo</h3><p>Horas invertidas sin valor real añadido.</p></div>
+                        <div class="feature-card" style="border-bottom: 8px solid var(--cda-navy);"><i class="fa-solid fa-triangle-exclamation"></i><h3>Riesgo de Error</h3><p>La manualidad facilita fallos en procesos críticos.</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 3: RPA QUÉ ES -->
+            <div class="slide" id="slide-3">
+                <div class="orange-bar"></div>
+                <img src="https://lh3.googleusercontent.com/d/1UomK2PgHz09yWMXjdLrhDADxWFqbfZE4" class="header-logo" alt="Logo">
+                <h2 class="slide-title">RPA: ¿Qué es?</h2>
+                <div class="content-filler">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; flex-grow: 1;">
+                        <div class="feature-card" style="padding: 40px; border-bottom: 10px solid var(--cda-orange);"><i class="fa-solid fa-robot" style="font-size: 70px;"></i><h3>Robot Digital</h3><p>Software que ejecuta procesos automáticos de extremo a extremo.</p></div>
+                        <div class="feature-card" style="padding: 40px; border-bottom: 10px solid var(--cda-blue);"><i class="fa-solid fa-ghost" style="font-size: 70px;"></i><h3>No Invasivo</h3><p>Trabaja sobre tus sistemas actuales sin necesidad de modificarlos.</p></div>
+                        <div class="feature-card" style="padding: 40px; border-bottom: 10px solid var(--cda-navy);"><i class="fa-solid fa-list-check" style="font-size: 70px;"></i><h3>Lógica Pura</h3><p>Sigue reglas lógicas predefinidas con un cumplimiento del 100%.</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 4: QUÉ HACE MAKE -->
+            <div class="slide" id="slide-4">
+                <div class="orange-bar"></div>
+                <img src="https://lh3.googleusercontent.com/d/1UomK2PgHz09yWMXjdLrhDADxWFqbfZE4" class="header-logo" alt="Logo">
+                <h2 class="slide-title">¿Qué hace MAKE?</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex-grow: 1;">
+                    <div class="feature-card"><i class="fa-solid fa-plug"></i><h3>Conexión</h3><p>Integra Gmail, Drive, Excel, CRM, ERP y más de 1000 apps.</p></div>
+                    <div class="feature-card"><i class="fa-solid fa-gears"></i><h3>Automatiza</h3><p>Crea flujos de trabajo visuales, inteligentes y autónomos.</p></div>
+                    <div class="feature-card"><i class="fa-solid fa-shuffle"></i><h3>Transforma</h3><p>Mueve y limpia datos entre sistemas con precisión absoluta.</p></div>
+                    <div class="feature-card"><i class="fa-solid fa-infinity"></i><h3>Operación 24/7</h3><p>Tus procesos se ejecutan siempre, incluso cuando no estás.</p></div>
+                </div>
+            </div>
+
+            <!-- SLIDE 5: VENTAJAS MAKE -->
+            <div class="slide" id="slide-5">
+                <div class="orange-bar"></div>
+                <img src="https://lh3.googleusercontent.com/d/1UomK2PgHz09yWMXjdLrhDADxWFqbfZE4" class="header-logo" alt="Logo">
+                <h2 class="slide-title">¿Por qué usar MAKE?</h2>
+                <div style="display: flex; flex-direction: column; justify-content: center; flex-grow: 1; gap: 15px;">
+                    <div class="pillar-item" style="font-size: 18px;">✅ Interfaz visual e intuitiva (Drag & Drop)</div>
+                    <div class="pillar-item" style="font-size: 18px;">✅ No requiere programación avanzada ni APIs</div>
+                    <div class="pillar-item" style="font-size: 18px;">✅ Rápida implementación: Soluciones en días</div>
+                    <div class="pillar-item" style="font-size: 18px;">✅ Integraciones universales con sistemas CDA</div>
+                    <div class="pillar-item" style="font-size: 18px; background: var(--cda-navy); color: white;">✅ Ideal para automatizaciones operativas internas</div>
+                </div>
+            </div>
+
+            <!-- SLIDE 6: RPA ES IA -->
+            <div class="slide" id="slide-6">
+                <div class="orange-bar"></div>
+                <img src="https://lh3.googleusercontent.com/d/1UomK2PgHz09yWMXjdLrhDADxWFqbfZE4" class="header-logo" alt="Logo">
+                <h2 class="slide-title">¿RPA es IA?</h2>
+                <div class="content-filler">
+                    <div class="card-navy"><p>Make no es IA por sí solo, pero <strong>le sumamos IA</strong> para que pueda tomar decisiones analizando el contexto y criterios humanos.</p></div>
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 30px; margin: 20px 0;">
+                        <div style="text-align: center; border: 4px solid var(--cda-blue); border-radius: 50%; width: 160px; height: 160px; display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-robot" style="font-size: 80px; color: var(--cda-navy);"></i></div>
+                        <i class="fa-solid fa-plus" style="font-size: 40px; color: var(--cda-orange);"></i>
+                        <div style="text-align: center; border: 4px solid var(--cda-orange); border-radius: 50%; width: 160px; height: 160px; display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-brain" style="font-size: 80px; color: var(--cda-orange);"></i></div>
+                    </div>
+                    <div class="feature-card" style="border-left: 8px solid var(--cda-orange);"><p style="font-weight: 600;">"IA = El Cerebro analítico | RPA = Las Manos operativas."</p></div>
+                </div>
+            </div>
+
+            <!-- SLIDE 7: LA LÓGICA DEL FLUJO -->
+            <div class="slide" id="slide-7">
+                <div class="orange-bar"></div>
+                <img src="https://lh3.googleusercontent.com/d/1UomK2PgHz09yWMXjdLrhDADxWFqbfZE4" class="header-logo" alt="Logo">
+                <h2 class="slide-title">La Lógica del Flujo</h2>
+                <div class="content-filler">
+                    <div class="logic-diagram">
+                        <div class="logic-node"><i class="fa-solid fa-bolt"></i><h3>Trigger</h3></div>
+                        <div class="logic-sep"><i class="fa-solid fa-chevron-right"></i></div>
+                        <div class="logic-node"><i class="fa-solid fa-sliders"></i><h3>Acción</h3></div>
+                        <div class="logic-sep"><i class="fa-solid fa-chevron-right"></i></div>
+                        <div class="logic-node"><i class="fa-solid fa-circle-check" style="color: #10b981;"></i><h3>Resultado</h3></div>
+                    </div>
+                    <div class="example-grid-logic">
+                        <div class="example-card-logic"><span>Comercial</span><p>Factura > ERP > Notificación</p></div>
+                        <div class="example-card-logic"><span>Staff</span><p>Mail > Adjunto > Teléfono</p></div>
+                        <div class="example-card-logic"><span>BI / Reportes</span><p>Email > CRM > Dashboard</p></div>
+                        <div class="example-card-logic"><span>Administración</span><p>Excel > CRM > Reporte</p></div>
+                        <div class="example-card-logic"><span>Higiene</span><p>Email > Limpieza > Excel</p></div>
+                        <div class="example-card-logic"><span>Seguimiento</span><p>Tarea CRM > Redacta > Envío</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 8: COMPONENTES CLAVE -->
+            <div class="slide" id="slide-8">
+                <div class="orange-bar"></div>
+                <img src="https://lh3.googleusercontent.com/d/1UomK2PgHz09yWMXjdLrhDADxWFqbfZE4" class="header-logo" alt="Logo">
+                <h2 class="slide-title">Componentes Clave</h2>
+                <div class="pillar-container">
+                    <div class="pillar">
+                        <div class="pillar-head-new head-trigger"><i class="fa-solid fa-bolt"></i> TRIGGER</div>
+                        <div class="pillar-item">Llega un Mail</div>
+                        <div class="pillar-item">Carga de Formulario</div>
+                        <div class="pillar-item">Registro en CRM</div>
+                    </div>
+                    <div class="pillar">
+                        <div class="pillar-head-new head-action"><i class="fa-solid fa-gears"></i> ACCIÓN</div>
+                        <div class="pillar-item">Guardar Adjunto</div>
+                        <div class="pillar-item">Crear Registro</div>
+                        <div class="pillar-item">Enviar Alerta / Mail</div>
+                    </div>
+                    <div class="pillar">
+                        <div class="pillar-head-new head-result"><i class="fa-solid fa-circle-check"></i> RESULTADO</div>
+                        <div class="pillar-item">Sincronización Total</div>
+                        <div class="pillar-item">Notificación Activa</div>
+                        <div class="pillar-item">Dashboard Actualizado</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 9: CASO WIL -->
+            <div class="slide" id="slide-9">
+                <div class="orange-bar"></div>
+                <img src="https://lh3.googleusercontent.com/d/1UomK2PgHz09yWMXjdLrhDADxWFqbfZE4" class="header-logo" alt="Logo">
+                <h2 class="slide-title">Caso de éxito: Wil</h2>
+                <div class="content-filler">
+                    <div class="wil-intro-box">
+                        <p>A continuación, vamos a ver cómo funciona Make con una prueba que hicimos de una tarea que realiza Wil, la cual consta de tomar un Excel, realizar una abreviación de los nombres de los clientes, eliminar una columna completa, eliminar ciertas filas que contengan cierta información y todo eso pegarlo en un Excel que ya tiene unos filtros aplicados y luego enviarlo por email.</p>
+                    </div>
+                    <div class="wil-flow-v6">
+                        <div class="flow-step-v6"><i class="fa-solid fa-file-excel"></i><h4>Origen Excel</h4></div>
+                        <i class="fa-solid fa-chevron-right" style="color: var(--cda-orange); opacity: 0.5;"></i>
+                        <div class="flow-step-v6"><i class="fa-solid fa-wand-magic-sparkles"></i><h4>Abrev. IA</h4></div>
+                        <i class="fa-solid fa-chevron-right" style="color: var(--cda-orange); opacity: 0.5;"></i>
+                        <div class="flow-step-v6"><i class="fa-solid fa-filter"></i><h4>Limpieza</h4></div>
+                        <i class="fa-solid fa-chevron-right" style="color: var(--cda-orange); opacity: 0.5;"></i>
+                        <div class="flow-step-v6"><i class="fa-solid fa-paper-plane"></i><h4>Envío Email</h4></div>
+                    </div>
+                    <div style="text-align: center;"><div style="background: var(--success); color: white; display: inline-block; padding: 12px 40px; border-radius: 50px; font-weight: 800; font-size: 14px; text-transform: uppercase;">RESULTADO: CARGA MANUAL ELIMINADA</div></div>
+                </div>
+            </div>
+
+            <!-- SLIDE 10: OPORTUNIDADES -->
+            <div class="slide" id="slide-10">
+                <div class="orange-bar"></div>
+                <img src="https://lh3.googleusercontent.com/d/1UomK2PgHz09yWMXjdLrhDADxWFqbfZE4" class="header-logo" alt="Logo">
+                <h2 class="slide-title">Detectar Oportunidades</h2>
+                <div class="opp-grid">
+                    <div class="opp-left">
+                        <h3 style="color: var(--cda-navy); font-size: 26px; margin-bottom: 10px;">No preguntes "¿Qué automatizar?"</h3>
+                        <div class="pillar-item" style="justify-content: flex-start; margin-bottom: 10px;">👉 ¿Qué procesos consumen más tiempo?</div>
+                        <div class="pillar-item" style="justify-content: flex-start; margin-bottom: 10px;">👉 ¿Donde se generan cuellos de botella?</div>
+                        <div class="pillar-item" style="justify-content: flex-start;">👉 ¿Qué tareas son repetitivas?</div>
+                    </div>
+                    <div class="opp-card-criteria">
+                        <h3 style="color: var(--cda-orange); margin-bottom: 25px; font-family: Lexend; font-size: 24px;">Candidato Ideal:</h3>
+                        <ul style="list-style: none; color: white;">
+                            <li style="margin-bottom: 15px; font-size: 18px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-check" style="color: var(--cda-orange);"></i> Es Repetitivo</li>
+                            <li style="margin-bottom: 15px; font-size: 18px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-check" style="color: var(--cda-orange);"></i> Tiene reglas claras</li>
+                            <li style="margin-bottom: 15px; font-size: 18px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-check" style="color: var(--cda-orange);"></i> Datos estructurados</li>
+                            <li style="font-size: 18px; display: flex; align-items: center; gap: 10px;"><i class="fa-solid fa-check" style="color: var(--cda-orange);"></i> Volumen Diario/Semanal</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 11: CURSO MAKE -->
+            <div class="slide" id="slide-11">
+                <div class="orange-bar"></div>
+                <img src="https://lh3.googleusercontent.com/d/1UomK2PgHz09yWMXjdLrhDADxWFqbfZE4" class="header-logo" alt="Logo">
+                <h2 class="slide-title">🤖 Conociendo Make</h2>
+                <div class="course-layout">
+                    <div class="course-main-card">
+                        <h3 style="font-family: Lexend; font-size: 32px; color: var(--cda-orange); margin-bottom: 20px;">CURSO DISPONIBLE</h3>
+                        <p style="font-size: 20px; line-height: 1.6; opacity: 0.9;">Hemos diseñado un programa intensivo dentro del <strong>ecosistema CDA</strong> para que domines la herramienta líder del mercado.</p>
+                        <div style="margin-top: 30px; display: flex; gap: 15px; align-items: center;">
+                            <i class="fa-solid fa-graduation-cap" style="font-size: 40px; color: var(--cda-orange);"></i>
+                            <p style="font-weight: 700; font-size: 18px;">¡Empezá hoy mismo tus primeros pasos!</p>
+                        </div>
+                    </div>
+                    <div class="course-items-grid">
+                        <div class="course-resource"><i class="fa-solid fa-book-open"></i><div><h4>Material de Estudio</h4><p style="font-size:12px">Documentación exclusiva paso a paso.</p></div></div>
+                        <div class="course-resource"><i class="fa-solid fa-layer-group"></i><div><h4>Catálogo CDA</h4><p style="font-size:12px">Librería de flujos listos para usar.</p></div></div>
+                        <div class="course-resource"><i class="fa-solid fa-blog"></i><div><h4>Blogs y Novedades</h4><p style="font-size:12px">Tendencias tech y casos de éxito.</p></div></div>
+                        <div class="course-resource" style="background: var(--cda-orange); border: none;"><i class="fa-solid fa-rocket" style="color: var(--cda-navy);"></i><h4 style="color: var(--cda-navy);">Acceder al Portal</h4></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 12: NUEVO - COMO SEGUIMOS -->
+            <div class="slide" id="slide-12">
+                <div class="orange-bar"></div>
+                <img src="https://lh3.googleusercontent.com/d/1UomK2PgHz09yWMXjdLrhDADxWFqbfZE4" class="header-logo" alt="Logo">
+                <h2 class="slide-title">¿Cómo seguimos?</h2>
+                <div class="next-steps-grid">
+                    <div>
+                        <div class="po-highlight">
+                            <div class="po-head">
+                                <i class="fa-solid fa-user-tie"></i>
+                                <div>
+                                    <span>Product Owner</span>
+                                    <h3>Paula Costa</h3>
+                                </div>
+                            </div>
+                            <ul class="rol-list">
+                                <li>Seleccionar procesos automatizables junto a cada área y priorizarlos.</li>
+                                <li>Ayudar a elegir la <strong>POC</strong> (Prueba de Concepto) inicial.</li>
+                                <li>Hacer seguimiento de los avances e informar a la Gerencia.</li>
+                            </ul>
+                        </div>
+                        <div class="support-box">
+                            <h4><i class="fa-solid fa-headset"></i> Soporte Técnico</h4>
+                            <p style="font-size: 14px;"><strong>Equipo:</strong> Elias y Federico (Staff de apoyo: Luciano / Andrea).</p>
+                            <p style="font-size: 14px; margin-top: 5px; opacity: 0.8;">Coordina y planifica: Paula Costa.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-result">
+                        <i class="fa-solid fa-calendar-check" style="font-size: 60px; margin-bottom: 20px;"></i>
+                        <h3 style="font-family: Lexend; font-size: 24px; margin-bottom: 15px;">Resultado Esperado</h3>
+                        <p style="font-weight: 600; line-height: 1.5;">Medición de avances cada 2 meses.</p>
+                        <div style="background: rgba(0,0,0,0.1); border-radius: 10px; padding: 15px; margin-top: 20px;">
+                            <span style="font-size: 12px; text-transform: uppercase;">Próximo Hito</span>
+                            <p style="font-size: 20px; font-weight: 800;">1ra Quincena de Abril</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 13: PREGUNTAS -->
+            <div class="slide" id="slide-13" style="justify-content: center; align-items: center; text-align: center;">
+                <div class="orange-bar"></div>
+                <i class="fa-solid fa-comments" style="font-size: 120px; color: var(--cda-orange); margin-bottom: 30px;"></i>
+                <h1 style="font-family: 'Lexend'; font-size: 80px; color: var(--cda-navy);">¿Preguntas?</h1>
+            </div>
+            
+            <!-- SLIDE 14: ACCIÓN -->
+            <div class="slide" id="slide-14" style="background: var(--cda-navy); color: white; justify-content: center; align-items: center; text-align: center;">
+                <h1 style="font-family: 'Lexend'; font-size: 50px; margin-bottom: 40px;">¡A trabajar junto a los automatizadores!</h1>
+                <i class="fa-solid fa-rocket animate-bounce" style="font-size: 100px; color: var(--cda-orange);"></i>
+            </div>
+            
+            <!-- SLIDE 15: GRACIAS -->
+            <div class="slide" id="slide-15" style="justify-content: center; align-items: center; text-align: center;">
+                <div class="orange-bar"></div>
+                <img src="https://lh3.googleusercontent.com/d/1UomK2PgHz09yWMXjdLrhDADxWFqbfZE4" style="height: 110px; margin-bottom: 30px;" alt="Logo">
+                <h1 style="font-family: 'Lexend'; font-size: 60px; color: var(--cda-navy);">¡Muchas Gracias!</h1>
+                <p style="font-weight: 700; color: var(--cda-orange); margin-top: 10px; font-size: 22px;">EQUIPO RPA + MAKE | CDA 2026</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- UI DE NAVEGACIÓN -->
+    <div class="slide-counter" id="counter-txt">01 / 15</div>
+    <div class="nav-ui">
+        <button class="nav-btn" aria-label="Anterior" onclick="prevSlide()"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="nav-btn" aria-label="Siguiente" onclick="nextSlide()"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+
+    <script>
+        let current = 1; 
+        const total = 15; 
+        const slides = document.querySelectorAll('.slide');
+        const counter = document.getElementById('counter-txt');
+        const deck = document.getElementById('deck');
+
+        function handleResize() {
+            const scaleX = window.innerWidth / 1380; 
+            const scaleY = window.innerHeight / 820; 
+            const scale = Math.min(scaleX, scaleY, 1);
+            deck.style.transform = `scale(${scale})`;
+        }
+
+        function updateDeck() {
+            slides.forEach((s) => { 
+                s.style.display = 'none'; 
+                s.classList.remove('active'); 
+            });
+            const activeSlide = document.getElementById('slide-' + current);
+            if (activeSlide) { 
+                activeSlide.style.display = 'flex'; 
+                activeSlide.classList.add('active'); 
+            }
+            counter.innerText = current.toString().padStart(2, '0') + ' / ' + total;
+        }
+
+        function nextSlide() { if (current < total) { current++; updateDeck(); } }
+        function prevSlide() { if (current > 1) { current--; updateDeck(); } }
+
+        document.addEventListener('keydown', (e) => { 
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide(); 
+            if (e.key === 'ArrowLeft') prevSlide(); 
+        });
+
+        let touchstartX = 0;
+        let touchendX = 0;
+        document.addEventListener('touchstart', e => touchstartX = e.changedTouches[0].screenX);
+        document.addEventListener('touchend', e => {
+            touchendX = e.changedTouches[0].screenX;
+            if (touchendX < touchstartX - 50) nextSlide();
+            if (touchendX > touchstartX + 50) prevSlide();
+        });
+
+        window.addEventListener('resize', handleResize);
+        window.onload = () => {
+            handleResize();
+            updateDeck();
+        };
+    </script>
+</body>
+</html>
